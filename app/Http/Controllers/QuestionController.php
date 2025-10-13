@@ -37,6 +37,12 @@ class QuestionController extends Controller
             'email.email' => 'Email tidak valid'
         ]);
 
+        //return redirect()->route('matakuliah');
+       // return redirect()->back();
+       //return redirect()->away('https://pcr.ac.id');
+       return redirect()->route('home')->with('info', 'Selamat, Kamu Lulus!');
+
+
     }
 
     /**

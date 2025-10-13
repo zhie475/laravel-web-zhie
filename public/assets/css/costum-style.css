@@ -1,0 +1,13 @@
+.navbar-logo {
+    height: 40px;
+    width: auto;
+}
+
+@font-face {
+    font-family: 'zirly';
+    src: url('../fonts/zirly.ttf');
+}
+
+.font-custom{
+    font-family: 'zirly';
+}

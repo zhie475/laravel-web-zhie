@@ -6,13 +6,12 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\MatakuliahController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuestionController;
-Route::get('/home',[HomeController::class,'index']);
+Route::get('/home',[HomeController::class,'index'])->name('home');
 
 Route::get('/pcr', function () {
     return 'selamat datang di website kampus PCR!';
 });
 
-//palen cangtip imuppp
 
 Route::get('/mahasiswa', function () {
     return 'hallo mahasiswa!';
@@ -33,7 +32,7 @@ Route::get('/about', function () {
 });
 
 
-Route::get('/matakuliah', [MatakuliahController::class, 'index']);
+Route::get('/matakuliah', [MatakuliahController::class, 'index'])->name('matakuliah');
 
 Route::get('/matakuliah/show/{kode?}', [MatakuliahController::class, 'show']);
 
