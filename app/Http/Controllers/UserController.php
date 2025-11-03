@@ -2,78 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+
 class UserController extends Controller
 {
-     // Menampilkan semua user
     public function index()
     {
-
-    $dataUser = User::all(); // ambil semua user dari database
-    return view('admin.user.index', compact('dataUser'));
-
+        $dataUser = User::all();
+        return view('admin.user.index', compact('dataUser'));
     }
 
-    // Menampilkan form tambah user
     public function create()
     {
         return view('admin.user.create');
     }
 
-    // Menyimpan user baru
     public function store(Request $request)
     {
-      $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|confirmed|min:6',
-    ]);
+        // VALIDASI SEDERHANA
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-    $data = $request->all();
-    $data['password'] = Hash::make($request->password);
+        // BUAT USER
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
 
-    User::create($data);
-
-    return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan!');
     }
 
-    // Menampilkan form edit
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        return view('admin.user.edit', compact('user'));
+        $dataUser = User::findOrFail($id);
+        return view('admin.user.edit', compact('dataUser'));
     }
 
-    // Update data user
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:8|confirmed',
         ]);
 
-        if ($request->filled('password')) {
-            $validated['password'] = Hash::make($request->password);
-        } else {
-            unset($validated['password']);
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
         }
 
-        $user->update($validated);
+        $user->save();
 
-        return redirect()->route('user.index')->with('success', 'User berhasil diperbarui.');
+        return redirect()->route('users.index')->with('success', 'User berhasil diupdate!');
     }
 
-    // Hapus user
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('user.index')->with('success', 'User berhasil dihapus.');
+        return redirect()->route('users.index')->with('success', 'User berhasil dihapus!');
     }
 }

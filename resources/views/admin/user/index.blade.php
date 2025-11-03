@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
-@section('title', 'List User')
-
+@section('title', 'List Users')
 @section('content')
+
+{{-- ini konten --}}
 <div class="py-4">
     <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
         <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
@@ -15,65 +16,68 @@
                     </svg>
                 </a>
             </li>
-            <li class="breadcrumb-item"><a href="{{ route('user.index') }}">User</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users</a></li>
         </ol>
     </nav>
-
     <div class="d-flex justify-content-between w-100 flex-wrap">
         <div class="mb-3 mb-lg-0">
-            <h1 class="h4">Data User</h1>
-            <p class="mb-0">List data seluruh user</p>
+            <h1 class="h4">Data Users</h1>
+            <p class="mb-0">List data seluruh users</p>
         </div>
         <div>
-            <a href="{{ route('user.create') }}" class="btn btn-success text-white">
-                <i class="far fa-question-circle me-1"></i> Tambah User
-            </a>
+            <a href="{{ route('users.create') }}" class="btn btn-success text-white"><i
+                    class="far fa-question-circle me-1"></i> Tambah User</a>
         </div>
     </div>
 </div>
+
+{{-- TAMBAHKAN FLASH MESSAGE --}}
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
 <div class="row">
     <div class="col-12 mb-4">
         <div class="card border-0 shadow mb-4">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="table-user" class="table table-centered table-nowrap mb-0 rounded">
+                    <table id="table-users" class="table table-centered table-nowrap mb-0 rounded">
                         <thead class="thead-light">
                             <tr>
-                                <th class="border-0">Nama</th>
+                                <th class="border-0">Name</th> {{-- GANTI: First Name -> Name --}}
                                 <th class="border-0">Email</th>
-                                <th class="border-0">password</th>
+                                <th class="border-0">Password</th> {{-- OPSIONAL --}}
                                 <th class="border-0 rounded-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($dataUser as $item)
                                 <tr>
-                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->name }}</td> {{-- GANTI: first_name -> name --}}
                                     <td>{{ $item->email }}</td>
-                                    <td>{{ $item->password }}</td>
+                                    <td>{{ $item->created_at->format('d/m/Y') }}</td> {{-- OPSIONAL --}}
                                     <td>
-                                        <a href="{{ route('user.edit', $item->id) }}" class="btn btn-info btn-sm">
-                                            <svg class="icon icon-xs me-2" fill="none" stroke-width="1.5"
-                                                stroke="currentColor" viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg">
+                                        <a href="{{ route('users.edit', $item->id) }}" class="btn btn-info btn-sm">
+                                            <svg class="icon icon-xs me-2" data-slot="icon" fill="none"
+                                                stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z">
+                                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
                                                 </path>
-                                            </svg>Edit
+                                            </svg>
+                                            Edit
                                         </a>
 
-                                        <form action="{{ route('user.destroy', $item->id) }}" method="POST" style="display:inline">
+                                        {{-- TOMBOL DELETE (OPSIONAL) --}}
+                                        <form action="{{ route('users.destroy', $item->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <svg class="icon icon-xs me-2" fill="none" stroke-width="1.5"
-                                                    stroke="currentColor" viewBox="0 0 24 24"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79">
-                                                    </path>
-                                                </svg>Hapus
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Yakin ingin menghapus user ini?')">
+                                                Hapus
                                             </button>
                                         </form>
                                     </td>

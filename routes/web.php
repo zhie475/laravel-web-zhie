@@ -2,20 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\MatakuliahController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\MatakuliahController;
 use App\Http\Controllers\UserController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+use App\Http\Controllers\LoginController;
 
 Route::get('/pcr', function () {
     return 'selamat datang di website kampus PCR!';
 });
 
+//palen cangtip imuppp
 
 Route::get('/mahasiswa', function () {
     return 'hallo mahasiswa!';
@@ -36,11 +36,11 @@ Route::get('/about', function () {
 });
 
 
-Route::get('/matakuliah', [MatakuliahController::class, 'index'])->name('matakuliah');
+Route::get('/matakuliah', [MatakuliahController::class, 'index']);
 
 Route::get('/matakuliah/show/{kode?}', [MatakuliahController::class, 'show']);
 
-Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::post('question/store', [QuestionController::class, 'store'])
     ->name('question.store');
@@ -48,6 +48,26 @@ Route::post('question/store', [QuestionController::class, 'store'])
 //pelanggan
 Route::resource('pelanggan', PelangganController::class);
 
-//user
-Route::resource('user', UserController::class);
+Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+Route::resource('users', UserController::class);
+
+// Public Routes
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Redirect root to login
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+// Protected Routes (harus login)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+    // CRUD Routes
+    Route::resource('users', UserController::class);
+    Route::resource('pelanggan', PelangganController::class);
+});
