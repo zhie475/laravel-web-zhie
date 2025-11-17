@@ -10,7 +10,7 @@ class MahasiswaController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-   {
+    {
         //
     }
 
@@ -35,10 +35,10 @@ class MahasiswaController extends Controller
      */
     public function show(string $param1)
     {
-        if($param1 == 'detail'){
-            return view('halaman-mahasiswa-detail');
-        }else if($param1 == 'profil'){
-            return view('halaman-mahasiswa-profil');
+        if($param1 == 'detail') {
+            return view('halaman-mahasiswa-detail') ;
+        } else if($param1 == 'profil') {
+            return view('halaman-mahasiswa-profil') ;
         }
     }
 
