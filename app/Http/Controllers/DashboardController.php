@@ -6,12 +6,10 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        return view('admin.dashboard'); // ✅ Karena dashboard.blade.php di root views
+        return view('admin.dashboard');
     }
 
     /**
