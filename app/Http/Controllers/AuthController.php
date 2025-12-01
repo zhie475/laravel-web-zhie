@@ -2,54 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    public function index()
     {
-        return view('admin.login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
-        $request->validate([
+        $input = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:8'
+            'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($input)) {
+            $request->session()->regenerate();
 
-        // Cari user berdasarkan email
-        $user = User::where('email', $request->email)->first();
+            // Cek Role User yang sedang login
+            if (auth()->user()->hasRole('admin')) {
+                return redirect()->intended('/admin/dashboard'); // Arahkan Admin
+            }
 
-        if (!$user) {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->withErrors([
-                    'email' => 'Username tidak ditemukan.',
-                ]);
+            // Jika bukan Admin → user biasa
+            return redirect()->intended('/dashboard');
         }
 
-        // Cek password dengan Hash::check
-        if (!Hash::check($request->password, $user->password)) {
-            return redirect()->back()
-                ->withInput($request->only('email'))
-                ->withErrors([
-                    'password' => 'Password yang dimasukkan salah.',
-                ]);
-        }
-
-        // Login user
-        Auth::login($user);
-
-        return redirect()->route('dashboard')->with('success', 'Login berhasil!');
+        // Jika Login Gagal
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
+    // Proses Logout
     public function logout(Request $request)
     {
         Auth::logout();
